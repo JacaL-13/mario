@@ -27,10 +27,12 @@ function LevelMaker.generate(width, height)
         table.insert(tiles, {})
     end
 
+	
+	
     -- column by column generation instead of row; sometimes better for platformers
     for x = 1, width do
         local tileID = TILE_ID_EMPTY
-        
+
         -- lay out the empty space
         for y = 1, 6 do
             table.insert(tiles[y],
@@ -38,7 +40,7 @@ function LevelMaker.generate(width, height)
         end
 
         -- chance to just be emptiness
-        if math.random(7) == 1 then
+        if math.random(7) == 1 and x > 1 then
             for y = 7, height do
                 table.insert(tiles[y],
                     Tile(x, y, tileID, nil, tileset, topperset))
@@ -55,7 +57,7 @@ function LevelMaker.generate(width, height)
             end
 
             -- chance to generate a pillar
-            if math.random(8) == 1 then
+            if math.random(8) == 1 and x > 1 then
                 blockHeight = 2
                 
                 -- chance to generate bush on pillar
@@ -78,6 +80,9 @@ function LevelMaker.generate(width, height)
                 -- pillar tiles
                 tiles[5][x] = Tile(x, 5, tileID, topper, tileset, topperset)
                 tiles[6][x] = Tile(x, 6, tileID, nil, tileset, topperset)
+
+				print(x)
+
                 tiles[7][x].topper = nil
             
             -- chance to generate bushes
