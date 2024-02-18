@@ -33,6 +33,7 @@ function Entity:init(def)
 
     -- reference to level for tests against other entities + objects
     self.level = def.level
+	self.hasKey = def.hasKey
 end
 
 function Entity:changeState(state, params)

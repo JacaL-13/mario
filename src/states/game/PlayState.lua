@@ -29,7 +29,8 @@ function PlayState:init()
             ['falling'] = function() return PlayerFallingState(self.player, self.gravityAmount) end
         },
         map = self.tileMap,
-        level = self.level
+        level = self.level,
+		hasKey = false
     })
 
     self:spawnEnemies()

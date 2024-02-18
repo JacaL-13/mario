@@ -25,12 +25,12 @@ end
 
 function Player:checkLeftCollisions(dt)
     -- check for left two tiles collision
-    local tileTopLeft = self.map:pointToTile(self.x + 1, self.y + 1)
-    local tileBottomLeft = self.map:pointToTile(self.x + 1, self.y + self.height - 1)
+    local tileTopLeft = self.map:pointToTile(self.x + HITBOX_X_OFFSET, self.y + 1)
+    local tileBottomLeft = self.map:pointToTile(self.x + HITBOX_X_OFFSET, self.y + self.height - 1)
 
     -- place player outside the X bounds on one of the tiles to reset any overlap
     if (tileTopLeft and tileBottomLeft) and (tileTopLeft:collidable() or tileBottomLeft:collidable()) then
-        self.x = (tileTopLeft.x - 1) * TILE_SIZE + tileTopLeft.width - 1
+        self.x = (tileTopLeft.x - 1) * TILE_SIZE + tileTopLeft.width - HITBOX_X_OFFSET
     else
         
         -- allow us to walk atop solid objects even if we collide with them
@@ -47,12 +47,12 @@ end
 
 function Player:checkRightCollisions(dt)
     -- check for right two tiles collision
-    local tileTopRight = self.map:pointToTile(self.x + self.width - 1, self.y + 1)
-    local tileBottomRight = self.map:pointToTile(self.x + self.width - 1, self.y + self.height - 1)
+    local tileTopRight = self.map:pointToTile(self.x + self.width - HITBOX_X_OFFSET, self.y + 1)
+    local tileBottomRight = self.map:pointToTile(self.x + self.width - HITBOX_X_OFFSET, self.y + self.height - 1)
 
     -- place player outside the X bounds on one of the tiles to reset any overlap
     if (tileTopRight and tileBottomRight) and (tileTopRight:collidable() or tileBottomRight:collidable()) then
-        self.x = (tileTopRight.x - 1) * TILE_SIZE - self.width
+        self.x = (tileTopRight.x - 1) * TILE_SIZE - self.width + HITBOX_X_OFFSET
     else
         
         -- allow us to walk atop solid objects even if we collide with them
