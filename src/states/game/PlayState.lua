@@ -10,32 +10,44 @@ PlayState = Class{__includes = BaseState}
 function PlayState:init()
     self.camX = 0
     self.camY = 0
-    self.level = LevelMaker.generate(100, 10)
-    self.tileMap = self.level.tileMap
-    self.background = math.random(3)
-    self.backgroundX = 0
+    
+end
 
-    self.gravityOn = true
-    self.gravityAmount = 6
-
-    self.player = Player({
-        x = 0, y = 0,
-        width = 16, height = 20,
-        texture = 'green-alien',
-        stateMachine = StateMachine {
-            ['idle'] = function() return PlayerIdleState(self.player) end,
-            ['walking'] = function() return PlayerWalkingState(self.player) end,
-            ['jump'] = function() return PlayerJumpState(self.player, self.gravityAmount) end,
-            ['falling'] = function() return PlayerFallingState(self.player, self.gravityAmount) end
-        },
-        map = self.tileMap,
-        level = self.level,
+function PlayState:enter(params)
+	
+	local score = params.score
+	self.levelNum = params.levelNum
+	
+	self.level = LevelMaker.generate(self.levelNum, 10)
+	
+	self.tileMap = self.level.tileMap
+	self.background = math.random(3)
+	self.backgroundX = 0
+	
+	self.gravityOn = true
+	self.gravityAmount = 6
+	
+	self.player = Player({
+		x = 0, y = 0,
+		width = 16, height = 20,
+		texture = 'green-alien',
+		stateMachine = StateMachine {
+			['idle'] = function() return PlayerIdleState(self.player) end,
+			['walking'] = function() return PlayerWalkingState(self.player) end,
+			['jump'] = function() return PlayerJumpState(self.player, self.gravityAmount) end,
+			['falling'] = function() return PlayerFallingState(self.player, self.gravityAmount) end
+		},
+		map = self.tileMap,
+		level = self.level,
 		hasKey = false
-    })
+	})
 
-    self:spawnEnemies()
-
-    self.player:changeState('falling')
+	self.player.score = score
+	
+	self:spawnEnemies()
+	
+	self.player:changeState('falling')
+	
 end
 
 function PlayState:update(dt)
@@ -78,8 +90,10 @@ function PlayState:render()
     love.graphics.setFont(gFonts['medium'])
     love.graphics.setColor(0, 0, 0, 1)
     love.graphics.print(tostring(self.player.score), 5, 5)
+    love.graphics.printf('Lvl: ' .. tostring(self.levelNum), 5, 5, VIRTUAL_WIDTH - 10, 'right')
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(tostring(self.player.score), 4, 4)
+    love.graphics.printf('Lvl: ' .. tostring(self.levelNum), 4, 4, VIRTUAL_WIDTH - 10, 'right')
 end
 
 function PlayState:updateCamera()

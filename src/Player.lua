@@ -17,6 +17,10 @@ end
 
 function Player:update(dt)
     Entity.update(self, dt)
+
+	-- check object collisions even if we're not moving
+	self:checkObjectCollisions()
+
 end
 
 function Player:render()
@@ -77,6 +81,9 @@ function Player:checkObjectCollisions()
             elseif object.consumable then
                 object.onConsume(self)
                 table.remove(self.level.objects, k)
+			elseif object.collidable then
+				-- trigger on collide
+				object.onCollide(self, object)
             end
         end
     end

@@ -4,9 +4,9 @@
 
     Author: Colton Ogden
     cogden@cs50.harvard.edu
-]]
-
-PlayerJumpState = Class{__includes = BaseState}
+]] PlayerJumpState = Class {
+    __includes = BaseState
+}
 
 function PlayerJumpState:init(player, gravity)
     self.player = player
@@ -36,15 +36,24 @@ function PlayerJumpState:update(dt)
     self.player.y = self.player.y + (self.player.dy * dt)
 
     -- look at two tiles above our head and check for collisions; 3 pixels of leeway for getting through gaps
-    local tileLeft = self.player.map:pointToTile(self.player.x + 3, self.player.y)
-    local tileRight = self.player.map:pointToTile(self.player.x + self.player.width - 3, self.player.y)
+    local tileLeft = self.player.map:pointToTile(self.player.x + HITBOX_X_OFFSET + 1, self.player.y)
+    local tileRight =
+        self.player.map:pointToTile(self.player.x + self.player.width - HITBOX_X_OFFSET - 1, self.player.y)
 
-    -- if we get a collision up top, go into the falling state immediately
-    if (tileLeft and tileRight) and (tileLeft:collidable() or tileRight:collidable()) then
+    local headBonk = false
+
+    if tileLeft then
+        headBonk = tileLeft.y + TILE_SIZE  < self.player.y
+	elseif tileRight then
+		headBonk = tileRight.y + TILE_SIZE < self.player.y
+    end
+
+    -- if we get a collision up top, and the collidable is above us go into the falling state immediately
+    if (tileLeft and tileRight) and (tileLeft:collidable() or tileRight:collidable()) and headBonk then
         self.player.dy = 0
         self.player:changeState('falling')
 
-    -- else test our sides for blocks
+        -- else test our sides for blocks
     elseif love.keyboard.isDown('left') then
         self.player.direction = 'left'
         self.player.x = self.player.x - PLAYER_WALK_SPEED * dt
@@ -58,7 +67,7 @@ function PlayerJumpState:update(dt)
     -- check if we've collided with any collidable game objects
     for k, object in pairs(self.player.level.objects) do
         if object:collides(self.player) then
-            if object.solid then
+            if object.solid and headBonk then
                 object.onCollide(self.player, object)
 
                 self.player.y = object.y + object.height

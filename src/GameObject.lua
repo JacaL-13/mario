@@ -4,11 +4,10 @@
 
     Author: Colton Ogden
     cogden@cs50.harvard.edu
-]]
-
-GameObject = Class{}
+]] GameObject = Class {}
 
 function GameObject:init(def)
+    self.id = def.id or '0'
     self.x = def.x
     self.y = def.y
     self.texture = def.texture
@@ -21,14 +20,26 @@ function GameObject:init(def)
     self.onCollide = def.onCollide
     self.onConsume = def.onConsume
     self.hit = def.hit
-	self.keyblock = def.keyblock
+
+    if self.id == 'flag' then
+        Timer.every(1, function()
+            if self.frame ~= 28 then
+				local animFrame = self.frame % 3
+
+				if animFrame == 1 then
+					self.frame = self.frame + 1
+				else
+					self.frame = self.frame - 1
+				end
+            end
+        end)
+    end
 end
 
 function GameObject:collides(target)
-    return not (target.x + HITBOX_X_OFFSET > self.x + self.width
-		or self.x > target.x + target.width - HITBOX_X_OFFSET
-		or target.y > self.y + self.height
-		or self.y > target.y + target.height)
+    return
+        not (target.x + HITBOX_X_OFFSET > self.x + self.width or self.x > target.x + target.width - HITBOX_X_OFFSET or
+            target.y > self.y + self.height or self.y > target.y + target.height)
 end
 
 function GameObject:update(dt)
